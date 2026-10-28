@@ -1,0 +1,11 @@
+services:
+  bot:
+    build: ./bot
+    container_name: bot-telegram-arcgis
+    env_file: .env
+    volumes:
+      - bot-data:/data   # registro local del bot (chat_id <-> reporte)
+    restart: unless-stopped
+
+volumes:
+  bot-data:

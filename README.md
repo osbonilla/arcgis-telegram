@@ -370,7 +370,7 @@ flowchart LR
 ### Paso 1. Obtener el proyecto
 
 ```bash
-git clone https://github.com/TU_USUARIO/arcgis-telegram.git
+git clone https://github.com/osbonilla/arcgis-telegram.git
 cd arcgis-telegram
 ```
 

@@ -33,10 +33,9 @@
 7. [Uso del bot](#7-uso-del-bot)
 8. [Crear tu propio flujo](#8-crear-tu-propio-flujo)
 9. [Operación y monitoreo](#9-operación-y-monitoreo)
-10. [Demostración en clase](#10-demostración-en-clase)
-11. [Solución de problemas](#11-solución-de-problemas)
-12. [Seguridad](#12-seguridad)
-13. [Extensiones sugeridas](#13-extensiones-sugeridas)
+10. [Solución de problemas](#10-solución-de-problemas)
+11. [Seguridad](#11-seguridad)
+12. [Extensiones sugeridas](#12-extensiones-sugeridas)
 
 ---
 
@@ -740,22 +739,7 @@ docker compose up -d --build
 
 ---
 
-## 10. Demostración en clase
-
-| Minuto | Actividad |
-|---|---|
-| 0 a 1 | Se proyecta el Dashboard vacío con el código QR del bot |
-| 1 a 4 | Los participantes envían reportes y los puntos aparecen en el Dashboard |
-| 4 a 5 | Se muestran los logs del contenedor para explicar el rol del *middleware* |
-| 5 a 7 | Un participante hace una consulta en lenguaje natural y se muestra la consulta generada |
-| 7 a 9 | Desde Field Maps se actualizan estados y los participantes reciben las notificaciones |
-| 9 a 10 | Cierre: los sistemas se integraron sin modificar ninguno de ellos |
-
-Recomendaciones previas: ensayar con varias personas reportando de forma simultánea, verificar el tiempo de respuesta del modelo y vaciar la capa de los reportes de prueba.
-
----
-
-## 11. Solución de problemas
+## 10. Solución de problemas
 
 | Síntoma | Causa probable | Solución |
 |---|---|---|
@@ -774,7 +758,7 @@ Recomendaciones previas: ensayar con varias personas reportando de forma simult�
 
 ---
 
-## 12. Seguridad
+## 11. Seguridad
 
 - El archivo `.env` contiene el token del bot y las credenciales de ArcGIS. No debe compartirse, proyectarse ni versionarse. El `.gitignore` lo excluye.
 - Si el token del bot se expone, revócalo con `/revoke` en BotFather.
@@ -785,7 +769,7 @@ Recomendaciones previas: ensayar con varias personas reportando de forma simult�
 
 ---
 
-## 13. Extensiones sugeridas
+## 12. Extensiones sugeridas
 
 | Extensión | Enfoque |
 |---|---|
@@ -797,5 +781,3 @@ Recomendaciones previas: ensayar con varias personas reportando de forma simult�
 | Otros canales | WhatsApp o Microsoft Teams; solo cambia `main.py`, `arcgis_client.py` se mantiene |
 
 ---
-
-<p align="center"><b>¿ArcGIS + … ?</b> Hoy fue Telegram. ¿Cuál es el siguiente sistema?</p>

@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="imgs/telegram.png" alt="GeoReporte: Telegram + ArcGIS" width="100%">
+  <img src="imgs/telegram.jpg" alt="GeoReporte: Telegram + ArcGIS" width="100%">
 </p>
 
 <h1 align="center">GeoReporte · Telegram + ArcGIS</h1>

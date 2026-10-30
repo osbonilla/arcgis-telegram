@@ -237,11 +237,10 @@ El contenedor **no publica puertos**: no recibe conexiones entrantes. Todo el tr
 
 ### 3.4 Ejecuciones puntuales
 
-Los scripts de administración usan la misma imagen en un contenedor temporal que se elimina al terminar (`--rm`):
+El script de creación de la capa usa la misma imagen en un contenedor temporal que se elimina al terminar (`--rm`):
 
 ```bash
 docker compose run --rm bot python crear_capa.py
-docker compose run --rm bot python actualizar_capa.py
 ```
 
 ---
@@ -249,14 +248,13 @@ docker compose run --rm bot python actualizar_capa.py
 ## 4. Descripción de los archivos
 
 ```
-telegram-arcgis/
+arcgis-telegram/
 ├── imgs/
 │   └── telegram.jpg
 ├── docker-compose.yml
 ├── .env.example
 ├── .gitignore
 ├── README.md
-├── GUIA_ESTUDIANTES.md
 └── bot/
     ├── Dockerfile
     ├── requirements.txt
@@ -265,8 +263,7 @@ telegram-arcgis/
         ├── arcgis_client.py
         ├── ia.py
         ├── store.py
-        ├── crear_capa.py
-        └── actualizar_capa.py
+        └── crear_capa.py
 ```
 
 ### 4.1 Archivos de la raíz
@@ -277,7 +274,7 @@ telegram-arcgis/
 | `.env.example` | Plantilla de configuración. Se copia como `.env` y se completa con los valores propios. |
 | `.env` | Configuración real con tokens y credenciales. No se incluye en el repositorio. |
 | `.gitignore` | Excluye del control de versiones el `.env` y los archivos temporales de Python. |
-| `GUIA_ESTUDIANTES.md` | Hoja de práctica para entregar a los participantes de la clase. |
+| `README.md` | Esta documentación. |
 | `imgs/telegram.jpg` | Imagen de resumen del proyecto. |
 
 ### 4.2 Imagen de Docker
@@ -340,10 +337,6 @@ Base de datos SQLite en `/data/reportes.db`, dentro del volumen de Docker. Relac
 
 Script de ejecución única. Crea una Hosted Feature Layer de puntos con los campos `categoria`, `descripcion`, `estado`, `urgencia`, `fecha` y `fuente`, dominios para estado y urgencia, adjuntos habilitados y simbología por estado. Al terminar imprime la URL que debe copiarse en `ARCGIS_LAYER_URL`.
 
-#### `actualizar_capa.py`: migración de la capa
-
-Agrega el campo `urgencia` a una capa creada con una versión anterior del proyecto. Si el campo ya existe, no realiza cambios.
-
 ---
 
 ## 5. Requisitos
@@ -377,8 +370,8 @@ flowchart LR
 ### Paso 1. Obtener el proyecto
 
 ```bash
-git clone https://github.com/TU_USUARIO/telegram-arcgis.git
-cd telegram-arcgis
+git clone https://github.com/TU_USUARIO/arcgis-telegram.git
+cd arcgis-telegram
 ```
 
 También puede descargarse como `.zip`. En ese caso, descomprímelo y abre una terminal dentro de la carpeta (en Windows: clic derecho, **Abrir en Terminal**).
@@ -530,12 +523,6 @@ Copia esa línea en el `.env`. La capa se crea como **privada**, con esta estruc
 | `fuente` | Texto (30) | Telegram, o Telegram + IA |
 
 La capa tiene además adjuntos habilitados y simbología por estado.
-
-Si la capa se creó con una versión anterior del proyecto, agrega el campo `urgencia` con:
-
-```bash
-docker compose run --rm bot python actualizar_capa.py
-```
 
 ### Paso 7. Iniciar el bot
 

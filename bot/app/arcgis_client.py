@@ -5,9 +5,15 @@ a operaciones del Feature Service (addFeatures, addAttachment, query).
 """
 import json
 import math
+import os
 import time
+from datetime import datetime
+from zoneinfo import ZoneInfo
 
 import requests
+
+
+ZONA = ZoneInfo(os.getenv("ZONA_HORARIA", "America/Guayaquil"))
 
 
 def lonlat_a_webmercator(lon: float, lat: float) -> dict:
@@ -77,7 +83,17 @@ class ArcGISClient:
         raise ArcGISError("Token inválido tras reintento")
 
     # --------------------------------------------------------- operaciones
+    def campos(self) -> set[str]:
+        """Nombres de los campos de la capa (se consulta una sola vez)."""
+        if not getattr(self, "_campos", None):
+            info = self.post(self.layer_url, {})
+            self._campos = {f["name"] for f in info.get("fields", [])}
+        return self._campos
+
     def agregar_reporte(self, lon: float, lat: float, atributos: dict) -> int:
+        # Solo se envían los atributos que existen en la capa (p. ej. 'urgencia' es opcional)
+        existentes = self.campos()
+        atributos = {k: v for k, v in atributos.items() if k in existentes and v is not None}
         feature = {"geometry": lonlat_a_webmercator(lon, lat), "attributes": atributos}
         j = self.post(f"{self.layer_url}/addFeatures",
                       {"features": json.dumps([feature]), "rollbackOnFailure": "true"})
@@ -103,3 +119,54 @@ class ArcGISClient:
         })
         return {f["attributes"]["OBJECTID"]: f["attributes"].get("estado")
                 for f in j.get("features", [])}
+
+    def consultar(self, where: str, operacion: str = "contar", agrupar_por: str | None = None,
+                  cerca: tuple[float, float] | None = None, radio_m: int = 500,
+                  limite: int = 5) -> dict:
+        """Consulta la capa: contar, listar o agrupar, con filtro opcional por distancia.
+
+        cerca = (lon, lat) en WGS84. Devuelve un dict pequeño, listo para dárselo a la IA.
+        """
+        params = {"where": where or "1=1", "returnGeometry": "false"}
+        if cerca:
+            params.update({
+                "geometry": json.dumps({"x": cerca[0], "y": cerca[1]}),
+                "geometryType": "esriGeometryPoint",
+                "inSR": "4326",
+                "spatialRel": "esriSpatialRelIntersects",
+                "distance": str(int(radio_m)),
+                "units": "esriSRUnit_Meter",
+            })
+        url = f"{self.layer_url}/query"
+
+        if operacion == "agrupar" and agrupar_por in self.campos():
+            params.update({
+                "groupByFieldsForStatistics": agrupar_por,
+                "outStatistics": json.dumps([{"statisticType": "count",
+                                              "onStatisticField": "OBJECTID",
+                                              "outStatisticFieldName": "total"}]),
+                "orderByFields": "total DESC",
+            })
+            j = self.post(url, params)
+            return {"grupos": {str(f["attributes"].get(agrupar_por)): f["attributes"]["total"]
+                               for f in j.get("features", [])}}
+
+        if operacion == "listar":
+            campos = [c for c in ("OBJECTID", "categoria", "estado", "urgencia", "descripcion", "fecha")
+                      if c in self.campos()]
+            params.update({"outFields": ",".join(campos), "orderByFields": "fecha DESC",
+                           "resultRecordCount": str(limite)})
+            j = self.post(url, params)
+            filas = []
+            for f in j.get("features", []):
+                a = dict(f["attributes"])
+                if a.get("fecha"):
+                    a["fecha"] = datetime.fromtimestamp(a["fecha"] / 1000, ZONA).strftime("%Y-%m-%d %H:%M")
+                filas.append(a)
+            conteo = {k: v for k, v in params.items()
+                      if k not in ("outFields", "orderByFields", "resultRecordCount")}
+            total = self.post(url, dict(conteo, returnCountOnly="true")).get("count", len(filas))
+            return {"total": total, "mostrando": filas}
+
+        params["returnCountOnly"] = "true"
+        return {"total": self.post(url, params).get("count", 0)}

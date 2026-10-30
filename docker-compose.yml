@@ -5,6 +5,8 @@ services:
     env_file: .env
     volumes:
       - bot-data:/data   # registro local del bot (chat_id <-> reporte)
+    extra_hosts:
+      - "host.docker.internal:host-gateway"   # para llegar al Ollama de tu computadora
     restart: unless-stopped
 
 volumes:

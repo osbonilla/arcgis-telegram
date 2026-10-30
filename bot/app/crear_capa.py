@@ -83,6 +83,12 @@ capa = {
              {"name": "Nuevo", "code": "Nuevo"},
              {"name": "En proceso", "code": "En proceso"},
              {"name": "Atendido", "code": "Atendido"}]}},
+        {"name": "urgencia", "type": "esriFieldTypeString", "alias": "Urgencia", "length": 10,
+         "nullable": True, "editable": True,
+         "domain": {"type": "codedValue", "name": "dom_urgencia", "codedValues": [
+             {"name": "Alta", "code": "Alta"},
+             {"name": "Media", "code": "Media"},
+             {"name": "Baja", "code": "Baja"}]}},
         {"name": "fecha", "type": "esriFieldTypeDate", "alias": "Fecha", "length": 8,
          "nullable": True, "editable": True},
         {"name": "fuente", "type": "esriFieldTypeString", "alias": "Fuente", "length": 30,
